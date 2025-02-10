@@ -7,11 +7,12 @@ module.exports = {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
-        unique: true,
         allowNull: false,
+        unique: true,
       },
       password: {
         type: Sequelize.STRING,
@@ -19,7 +20,8 @@ module.exports = {
       },
       preferences: {
         type: Sequelize.JSONB,
-        defaultValue: {},
+        allowNull: false,
+        defaultValue: "{}",
       },
       createdAt: {
         allowNull: false,

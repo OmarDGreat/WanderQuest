@@ -10,12 +10,13 @@ module.exports = {
       },
       userId: {
         type: Sequelize.UUID,
+        allowNull: false,
         references: {
           model: "Users",
           key: "id",
         },
+        onUpdate: "CASCADE",
         onDelete: "CASCADE",
-        allowNull: false,
       },
       title: {
         type: Sequelize.STRING,
@@ -30,8 +31,9 @@ module.exports = {
         allowNull: false,
       },
       budget: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
+        defaultValue: 0.0,
       },
       activities: {
         type: Sequelize.JSONB,

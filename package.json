@@ -1,12 +1,28 @@
 {
-  "name": "travel-planner",
+  "name": "wanderquest",
   "version": "1.0.0",
+  "description": "Travel planning application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/server.js",
+    "server": "cd server && nodemon server.js",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install-deps": "npm install && cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm run build",
+    "db:create": "psql -U postgres -c \"DROP DATABASE IF EXISTS wanderquest_db;\" && psql -U postgres -c \"CREATE DATABASE wanderquest_db;\"",
+    "db:migrate": "cd server && npx sequelize-cli db:migrate",
+    "db:migrate:undo": "cd server && npx sequelize-cli db:migrate:undo",
+    "db:migrate:undo:all": "cd server && npx sequelize-cli db:migrate:undo:all",
+    "db:seed": "cd server && npx sequelize-cli db:seed:all",
+    "db:seed:undo": "cd server && npx sequelize-cli db:seed:undo:all",
+    "db:reset": "npm run db:create && npm run db:migrate && npm run db:seed"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.3"
+  }
 }

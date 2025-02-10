@@ -1,18 +1,31 @@
 require("dotenv").config();
 
-module.exports = {
+const config = {
   development: {
-    url: process.env.DATABASE_URL,
+    username: process.env.DB_USER || "postgres",
+    password: process.env.DB_PASSWORD,
+    database: "wanderquest_db",
+    host: process.env.DB_HOST || "localhost",
     dialect: "postgres",
+    port: process.env.DB_PORT || 5432,
+    logging: console.log,
     seederStorage: "sequelize",
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
   },
   test: {
-    url: process.env.TEST_DATABASE_URL,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: "wanderquest_db_test",
+    host: process.env.DB_HOST,
     dialect: "postgres",
-    seederStorage: "sequelize",
   },
   production: {
-    url: process.env.DATABASE_URL,
+    use_env_variable: "DATABASE_URL",
     dialect: "postgres",
     dialectOptions: {
       ssl: {
@@ -20,6 +33,7 @@ module.exports = {
         rejectUnauthorized: false,
       },
     },
-    seederStorage: "sequelize",
   },
 };
+
+module.exports = config;

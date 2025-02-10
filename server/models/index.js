@@ -1,19 +1,42 @@
-const sequelize = require("../config/database");
-const User = require("./User");
-const Itinerary = require("./Itinerary");
+const { Sequelize } = require("sequelize");
+const config = require("../config/config.js");
+const env = process.env.NODE_ENV || "development";
+const dbConfig = config[env];
 
-// Define associations
-User.hasMany(Itinerary, {
-  foreignKey: "userId",
-  onDelete: "CASCADE",
-});
+let sequelize;
+if (dbConfig.use_env_variable) {
+  sequelize = new Sequelize(process.env[dbConfig.use_env_variable], dbConfig);
+} else {
+  sequelize = new Sequelize(
+    dbConfig.database,
+    dbConfig.username,
+    dbConfig.password,
+    dbConfig
+  );
+}
 
-Itinerary.belongsTo(User, {
-  foreignKey: "userId",
-});
+// Test the connection
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Database connection has been established successfully.");
+  })
+  .catch((err) => {
+    console.error("Unable to connect to the database:", err);
+  });
 
-module.exports = {
+const db = {
   sequelize,
-  User,
-  Itinerary,
+  Sequelize,
+  User: require("./User")(sequelize, Sequelize),
+  Itinerary: require("./Itinerary")(sequelize, Sequelize),
 };
+
+// Set up associations
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+module.exports = db;
