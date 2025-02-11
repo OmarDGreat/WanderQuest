@@ -17,6 +17,9 @@ export default {
           900: "#0c4a6e",
         },
       },
+      boxShadow: {
+        soft: "0 2px 4px rgba(0,0,0,0.05)",
+      },
     },
   },
   plugins: [],
