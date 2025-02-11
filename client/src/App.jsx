@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import Layout from "./components/layout/Layout";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 import Itineraries from "./pages/Itineraries";
 import CreateTrip from "./pages/CreateTrip";
 
@@ -11,15 +11,27 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="min-h-screen bg-white">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/itineraries" element={<Itineraries />} />
-            <Route path="/create-trip" element={<CreateTrip />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/itineraries"
+            element={
+              <ProtectedRoute>
+                <Itineraries />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-trip"
+            element={
+              <ProtectedRoute>
+                <CreateTrip />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </AuthProvider>
     </Router>
   );
