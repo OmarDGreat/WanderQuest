@@ -1,0 +1,111 @@
+@layer components {
+  /* Typography */
+  .h1 {
+    @apply text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl;
+  }
+  
+  .h2 {
+    @apply text-3xl font-bold tracking-tight text-gray-900;
+  }
+  
+  .h3 {
+    @apply text-2xl font-semibold text-gray-900;
+  }
+  
+  .text-body {
+    @apply text-base text-gray-600;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium
+    shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors
+    disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 
+    focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-gray-700 border border-gray-300 
+    hover:bg-gray-50 focus:ring-primary-500;
+  }
+
+  .btn-success {
+    @apply btn bg-success-500 text-white hover:bg-success-700 
+    focus:ring-success-500;
+  }
+
+  .btn-error {
+    @apply btn bg-error-500 text-white hover:bg-error-700 
+    focus:ring-error-500;
+  }
+
+  /* Forms */
+  .form-group {
+    @apply space-y-1;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700;
+  }
+
+  .form-input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm
+    focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+
+  .form-error {
+    @apply mt-1 text-sm text-error-500;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-lg shadow-soft overflow-hidden;
+  }
+
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200;
+  }
+
+  .card-body {
+    @apply px-6 py-4;
+  }
+
+  .card-footer {
+    @apply px-6 py-4 border-t border-gray-200;
+  }
+
+  /* Alerts */
+  .alert {
+    @apply rounded-md p-4 mb-4;
+  }
+
+  .alert-success {
+    @apply alert bg-success-50 text-success-700;
+  }
+
+  .alert-error {
+    @apply alert bg-error-50 text-error-700;
+  }
+
+  .alert-warning {
+    @apply alert bg-warning-50 text-warning-700;
+  }
+
+  /* Navigation */
+  .nav-link {
+    @apply text-gray-500 hover:text-gray-700 px-3 py-2 text-sm font-medium;
+  }
+
+  .nav-link-active {
+    @apply text-primary-600 hover:text-primary-700;
+  }
+
+  /* Lists */
+  .list-item {
+    @apply py-5 border-b border-gray-200 last:border-0;
+  }
+} 
