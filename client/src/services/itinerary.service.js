@@ -1,8 +1,8 @@
-import api from '../lib/api';
+import api from "../lib/api";
 
 export const itineraryService = {
   getAllItineraries: async () => {
-    const response = await api.get('/itineraries');
+    const response = await api.get("/itineraries");
     return response.data;
   },
 
@@ -12,7 +12,7 @@ export const itineraryService = {
   },
 
   createItinerary: async (itineraryData) => {
-    const response = await api.post('/itineraries', itineraryData);
+    const response = await api.post("/itineraries", itineraryData);
     return response.data;
   },
 
@@ -24,5 +24,23 @@ export const itineraryService = {
   deleteItinerary: async (id) => {
     const response = await api.delete(`/itineraries/${id}`);
     return response.data;
-  }
-}; 
+  },
+
+  // New methods
+  getDashboardStats: async () => {
+    const response = await api.get("/itineraries/stats");
+    return response.data;
+  },
+
+  searchItineraries: async (query) => {
+    const response = await api.get(
+      `/itineraries/search?q=${encodeURIComponent(query)}`
+    );
+    return response.data;
+  },
+
+  getUpcoming: async () => {
+    const response = await api.get("/itineraries/upcoming");
+    return response.data;
+  },
+};
