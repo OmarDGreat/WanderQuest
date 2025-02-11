@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { validateEmail, validatePassword } from "../../utils/validation.utils";
-import { Button, Input } from "../../components/common";
+import { Button } from "../../components/common";
 import Layout from "../../components/layout/Layout";
 
 export default function Register() {
@@ -53,79 +53,116 @@ export default function Register() {
 
   return (
     <Layout>
-      <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-primary-600 hover:text-primary-500"
-            >
-              Sign in
-            </Link>
-          </p>
-        </div>
+      <div className="max-w-2xl mx-auto px-4 py-16">
+        <div className="bg-gradient-to-br from-white to-primary-50/30 border border-primary-100 shadow-lg rounded-xl">
+          <div className="px-8 py-10 sm:p-12">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-extrabold text-gray-900">
+                Create Account
+              </h2>
+              <p className="mt-3 text-base text-gray-600">
+                Join us to start planning your trips
+              </p>
+            </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             {errors.form && (
-              <div className="mb-4 text-error-600 text-sm">{errors.form}</div>
+              <div className="mb-8 text-error-600 text-sm rounded-lg bg-error-50 p-5 border border-error-200">
+                {errors.form}
+              </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <Input
-                label="Email address"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={errors.email}
-                required
-              />
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                    placeholder="you@example.com"
+                  />
+                  {errors.email && (
+                    <p className="mt-2 text-sm text-error-600">
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
 
-              <Input
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                error={errors.password}
-                required
-              />
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                    placeholder="••••••••"
+                  />
+                  {errors.password && (
+                    <p className="mt-2 text-sm text-error-600">
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
 
-              <Input
-                label="Confirm Password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                error={errors.confirmPassword}
-                required
-              />
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                    placeholder="••••••••"
+                  />
+                  {errors.confirmPassword && (
+                    <p className="mt-2 text-sm text-error-600">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-              <Button
-                type="submit"
-                variant="primary"
-                className="w-full"
-                isLoading={isLoading}
-              >
-                Create Account
-              </Button>
+              <div className="pt-6">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-full text-lg py-3"
+                  isLoading={isLoading}
+                >
+                  Create Account
+                </Button>
+              </div>
             </form>
 
-            <div className="mt-6">
-              <p className="text-center text-sm text-gray-500">
+            <div className="mt-8 space-y-4 text-center text-sm text-gray-600">
+              <p>
+                Already have an account?{" "}
+                <Link
+                  to="/login"
+                  className="font-medium text-primary-600 hover:text-primary-500"
+                >
+                  Sign in
+                </Link>
+              </p>
+
+              <p className="text-xs">
                 By registering, you agree to our{" "}
                 <Link
                   to="/terms"
-                  className="text-primary-600 hover:text-primary-500"
+                  className="font-medium text-primary-600 hover:text-primary-500"
                 >
                   Terms of Service
                 </Link>{" "}
                 and{" "}
                 <Link
                   to="/privacy"
-                  className="text-primary-600 hover:text-primary-500"
+                  className="font-medium text-primary-600 hover:text-primary-500"
                 >
                   Privacy Policy
                 </Link>

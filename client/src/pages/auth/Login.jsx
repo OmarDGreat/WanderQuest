@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { validateEmail } from "../../utils/validation.utils";
-import { Button, Input } from "../../components/common";
+import { Button } from "../../components/common";
+import Layout from "../../components/layout/Layout";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -40,56 +41,113 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
-          Sign in to your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{" "}
-          <Link
-            to="/register"
-            className="text-primary-600 hover:text-primary-500"
-          >
-            create a new account
-          </Link>
-        </p>
-      </div>
+    <Layout>
+      <div className="max-w-2xl mx-auto px-4 py-16">
+        <div className="bg-gradient-to-br from-white to-primary-50/30 border border-primary-100 shadow-lg rounded-xl">
+          <div className="px-8 py-10 sm:p-12">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-extrabold text-gray-900">
+                Welcome Back
+              </h2>
+              <p className="mt-3 text-base text-gray-600">
+                Sign in to continue your journey
+              </p>
+            </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {errors.form && (
-            <div className="mb-4 text-error-600 text-sm">{errors.form}</div>
-          )}
+            {errors.form && (
+              <div className="mb-8 text-error-600 text-sm rounded-lg bg-error-50 p-5 border border-error-200">
+                {errors.form}
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <Input
-              label="Email address"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={errors.email}
-            />
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                    placeholder="you@example.com"
+                  />
+                  {errors.email && (
+                    <p className="mt-2 text-sm text-error-600">
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
 
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
-            />
+                <div className="space-y-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                  />
+                  {errors.password && (
+                    <p className="mt-2 text-sm text-error-600">
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              className="w-full"
-              isLoading={isLoading}
-            >
-              Sign in
-            </Button>
-          </form>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2 block text-sm text-gray-700"
+                  >
+                    Remember me
+                  </label>
+                </div>
+
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-medium text-primary-600 hover:text-primary-500"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+
+              <div className="pt-6">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-full text-lg py-3"
+                  isLoading={isLoading}
+                >
+                  Sign in
+                </Button>
+              </div>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <Link
+                  to="/register"
+                  className="font-medium text-primary-600 hover:text-primary-500"
+                >
+                  Create one now
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
