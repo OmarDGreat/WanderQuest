@@ -1,81 +1,52 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { itineraryService } from "../services";
+import { ItineraryList } from "../components/features/itinerary";
+import { Button } from "../components/common";
+import Layout from "../components/layout/Layout";
 
 export default function Itineraries() {
   const [itineraries, setItineraries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchItineraries();
+    loadItineraries();
   }, []);
 
-  const fetchItineraries = async () => {
+  const loadItineraries = async () => {
     try {
-      const response = await axios.get('/itineraries');
-      setItineraries(response.data);
+      const data = await itineraryService.getAllItineraries();
+      setItineraries(data);
     } catch (err) {
-      setError('Failed to fetch itineraries');
+      setError("Failed to load itineraries");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this itinerary?')) {
-      try {
-        await axios.delete(`/itineraries/${id}`);
-        setItineraries(itineraries.filter(item => item.id !== id));
-      } catch (err) {
-        setError('Failed to delete itinerary');
-      }
+    try {
+      await itineraryService.deleteItinerary(id);
+      setItineraries(itineraries.filter((item) => item.id !== id));
+    } catch (err) {
+      setError("Failed to delete itinerary");
     }
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-red-600">{error}</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Itineraries</h1>
-        <Link to="/create-trip" className="btn-primary">
-          Create New Trip
-        </Link>
+    <Layout>
+      <div>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">My Itineraries</h1>
+          <Button variant="primary" href="/create-trip">
+            Create New Trip
+          </Button>
+        </div>
+        <ItineraryList itineraries={itineraries} onDelete={handleDelete} />
       </div>
-
-      {itineraries.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-600">No itineraries yet. Start by creating one!</p>
-        </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {itineraries.map((itinerary) => (
-            <div
-              key={itinerary.id}
-              className="bg-white rounded-lg shadow-md p-6"
-            >
-              <h3 className="text-xl font-semibold mb-2">{itinerary.title}</h3>
-              <div className="text-gray-600 mb-4">
-                <p>
-                  {new Date(itinerary.startDate).toLocaleDateString()} -{' '}
-                  {new Date(itinerary.endDate).toLocaleDateString()}
-                </p>
-                <p>Budget: ${itinerary.budget}</p>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  onClick={() => handleDelete(itinerary.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    </Layout>
   );
-} 
+}

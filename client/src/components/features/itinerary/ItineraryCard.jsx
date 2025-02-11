@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
-import Card from '../../common/Card';
+import { Link } from "react-router-dom";
+import Card from "../../common/Card";
+import { formatDate, formatDateRange } from "../../../utils/date.utils";
 
 export default function ItineraryCard({ itinerary, onDelete }) {
   const { id, title, startDate, endDate, budget } = itinerary;
@@ -24,17 +25,11 @@ export default function ItineraryCard({ itinerary, onDelete }) {
         </div>
       }
     >
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-        {title}
-      </h3>
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
       <div className="text-sm text-gray-500 space-y-1">
-        <p>
-          {new Date(startDate).toLocaleDateString()} - {new Date(endDate).toLocaleDateString()}
-        </p>
-        <p>
-          Budget: ${budget.toLocaleString()}
-        </p>
+        <p>{formatDateRange(startDate, endDate)}</p>
+        <p>Budget: ${budget.toLocaleString()}</p>
       </div>
     </Card>
   );
-} 
+}
