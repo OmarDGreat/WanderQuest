@@ -1,4 +1,5 @@
 const { Itinerary } = require("../models");
+const axios = require("axios");
 
 const itineraryController = {
   getAllItineraries: async (req, res) => {
@@ -14,13 +15,76 @@ const itineraryController = {
 
   createItinerary: async (req, res) => {
     try {
+      const { title, startDate, endDate, budget, location } = req.body;
+      console.log("Request body:", req.body);
+
+      // Get current date and calculate days until start date
+      const today = new Date();
+      const startDateObj = new Date(startDate);
+      const daysUntilStart = Math.ceil(
+        (startDateObj - today) / (1000 * 60 * 60 * 24)
+      );
+
+      let weatherData = [];
+
+      try {
+        // Always fetch weather data for debugging
+        console.log("Fetching weather data from OpenWeather API...");
+        const weatherResponse = await axios.get(
+          `https://api.openweathermap.org/data/2.5/forecast`,
+          {
+            params: {
+              q: location,
+              appid: process.env.OPENWEATHER_API_KEY,
+              units: "metric",
+            },
+          }
+        );
+
+        // Since the trip is in the future, store the location coordinates
+        weatherData = {
+          coordinates: weatherResponse.data.city.coord,
+          location: location,
+          message: "Weather forecast will be available closer to trip date",
+          sampleData: weatherResponse.data.list.slice(0, 3).map((entry) => ({
+            date: entry.dt_txt,
+            temp: entry.main.temp,
+            feels_like: entry.main.feels_like,
+            description: entry.weather[0].description,
+            icon: entry.weather[0].icon,
+            humidity: entry.main.humidity,
+            wind_speed: entry.wind.speed,
+          })),
+        };
+
+        console.log("Final weather data:", weatherData);
+      } catch (weatherError) {
+        console.error("Error fetching weather data:", weatherError.message);
+        if (weatherError.response) {
+          console.error("API Response:", weatherError.response.data);
+          console.error("API Status:", weatherError.response.status);
+        }
+      }
+
+      // Create itinerary with weather data
       const itinerary = await Itinerary.create({
-        ...req.body,
+        title,
+        startDate,
+        endDate,
+        budget,
+        location,
         userId: req.user.id,
+        weatherData,
+        activities: req.body.activities || [],
       });
+
       res.status(201).json(itinerary);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      console.error("Error creating itinerary:", error);
+      res.status(400).json({
+        error: error.message,
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
+      });
     }
   },
 

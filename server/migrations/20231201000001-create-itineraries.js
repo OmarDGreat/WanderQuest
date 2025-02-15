@@ -8,16 +8,6 @@ module.exports = {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      userId: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: "Users",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
       title: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -33,15 +23,22 @@ module.exports = {
       budget: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
-        defaultValue: 0.0,
+      },
+      location: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      weatherData: {
+        type: Sequelize.JSONB,
+        allowNull: true,
       },
       activities: {
         type: Sequelize.JSONB,
         defaultValue: [],
       },
-      weatherData: {
-        type: Sequelize.JSONB,
-        defaultValue: {},
+      userId: {
+        type: Sequelize.UUID,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

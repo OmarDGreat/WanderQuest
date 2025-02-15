@@ -30,15 +30,18 @@ module.exports = (sequelize, DataTypes) => {
       budget: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
-        defaultValue: 0.0,
+      },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      weatherData: {
+        type: DataTypes.JSONB,
+        allowNull: true,
       },
       activities: {
         type: DataTypes.JSONB,
         defaultValue: [],
-      },
-      weatherData: {
-        type: DataTypes.JSONB,
-        defaultValue: {},
       },
     },
     {

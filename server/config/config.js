@@ -10,6 +10,7 @@ const config = {
     port: process.env.DB_PORT || 5432,
     logging: console.log,
     seederStorage: "sequelize",
+    seederStorageTableName: "SequelizeSeeds",
     pool: {
       max: 5,
       min: 0,
