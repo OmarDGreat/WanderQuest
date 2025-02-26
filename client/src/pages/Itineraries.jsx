@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { itineraryService } from "../services";
 import { Button, Card } from "../components/common";
 import Layout from "../components/layout/Layout";
+import { Link } from "react-router-dom";
 
 export default function Itineraries() {
   const [itineraries, setItineraries] = useState([]);
@@ -99,7 +100,8 @@ export default function Itineraries() {
             <div className="mt-4 sm:mt-0">
               <Button
                 variant="primary"
-                href="/create-trip"
+                as={Link}
+                to="/create-trip"
                 className="w-full sm:w-auto"
               >
                 <svg
@@ -183,7 +185,7 @@ export default function Itineraries() {
               Get started by creating a new trip
             </p>
             <div className="mt-6">
-              <Button variant="primary" href="/create-trip">
+              <Button variant="primary" as={Link} to="/create-trip">
                 Create New Trip
               </Button>
             </div>
@@ -220,6 +222,28 @@ export default function Itineraries() {
                           {formatDate(itinerary.endDate)}
                         </span>
                       </div>
+                      <div className="mt-2 flex items-center text-sm text-gray-600">
+                        <svg
+                          className="mr-1.5 h-4 w-4 text-primary-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        <span>{itinerary.location}</span>
+                      </div>
                     </div>
                     <div className="flex flex-col items-end">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700 ring-1 ring-inset ring-primary-600/20 shadow-sm">
@@ -227,7 +251,6 @@ export default function Itineraries() {
                       </span>
                     </div>
                   </div>
-
                   <div className="mt-4">
                     <h4 className="text-sm font-medium text-gray-900 flex items-center">
                       <svg
@@ -272,10 +295,16 @@ export default function Itineraries() {
                     </div>
                   </div>
 
+                  {/* Provide Weather based location *Up to 5 days* */}
+                  
+                  {/* <div>
+                  {itinerary.weatherData}
+                  </div> */}
                   <div className="mt-6 pt-4 border-t border-primary-100/60 flex justify-end space-x-3">
                     <Button
                       variant="secondary"
-                      href={`/itineraries/${itinerary.id}`}
+                      as={Link}
+                      to={`/itineraries/${itinerary.id}`}
                       className="text-sm group hover:bg-primary-50"
                     >
                       <span className="flex items-center">

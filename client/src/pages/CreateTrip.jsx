@@ -9,6 +9,7 @@ const INITIAL_FORM_STATE = {
   startDate: "",
   endDate: "",
   budget: "",
+  location: "",
   activities: [],
 };
 
@@ -27,10 +28,14 @@ export default function CreateTrip() {
 
   const validate = () => {
     const newErrors = {};
-    const { title, startDate, endDate, budget } = formData;
+    const { title, startDate, endDate, budget, location } = formData;
 
     if (!title?.trim()) {
       newErrors.title = "Title is required";
+    }
+
+    if (!location?.trim()) {
+      newErrors.location = "Location is required";
     }
 
     if (!startDate) {
@@ -248,6 +253,25 @@ export default function CreateTrip() {
                       {errors.endDate && (
                         <p className="mt-2 text-sm text-error-600">
                           {errors.endDate}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                        placeholder="e.g., Paris, France"
+                      />
+                      {errors.location && (
+                        <p className="mt-2 text-sm text-error-600">
+                          {errors.location}
                         </p>
                       )}
                     </div>
