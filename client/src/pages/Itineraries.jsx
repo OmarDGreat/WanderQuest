@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { itineraryService } from "../services";
 import { weatherService } from "../services/weather.service";
+import { placesService } from "../services/places.service";
 import { Button, Card } from "../components/common";
 import Layout from "../components/layout/Layout";
 import { Link } from "react-router-dom";
@@ -12,6 +13,7 @@ export default function Itineraries() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("startDate"); // startDate, title, budget
   const [weatherData, setWeatherData] = useState({});
+  const [placesData, setPlacesData] = useState({});
 
   useEffect(() => {
     loadItineraries();
@@ -50,6 +52,36 @@ export default function Itineraries() {
 
     if (itineraries.length > 0) {
       fetchWeatherData();
+    }
+  }, [itineraries]);
+
+  useEffect(() => {
+    const fetchPlacesData = async () => {
+      for (const itinerary of itineraries) {
+        if (itinerary.location) {
+          try {
+            const data = await placesService.searchPlaces(
+              itinerary.location,
+              "tourist attractions"
+            );
+            if (data && data.results) {
+              setPlacesData((prev) => ({
+                ...prev,
+                [itinerary.id]: data.results.slice(0, 3),
+              }));
+            }
+          } catch (err) {
+            console.error(
+              `Failed to load places for ${itinerary.location}:`,
+              err
+            );
+          }
+        }
+      }
+    };
+
+    if (itineraries.length > 0) {
+      fetchPlacesData();
     }
   }, [itineraries]);
 
@@ -375,6 +407,56 @@ export default function Itineraries() {
                             </span>
                             <span className="text-xs text-gray-600">
                               {day.weather[0].main}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {placesData[itinerary.id] && (
+                    <div className="mt-4 pt-4 border-t border-primary-100/60">
+                      <h4 className="text-sm font-medium text-gray-900 flex items-center">
+                        <svg
+                          className="mr-2 h-4 w-4 text-primary-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        Popular Places Nearby
+                      </h4>
+                      <div className="mt-3 space-y-2">
+                        {placesData[itinerary.id].map((place, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center text-sm bg-blue-50 rounded-lg p-2 border border-primary-100"
+                          >
+                            <span className="w-8 h-8 flex-shrink-0 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-medium">
+                              {index + 1}
+                            </span>
+                            <div className="ml-3 flex-1">
+                              <span className="font-medium text-gray-900">
+                                {place.name}
+                              </span>
+                              <p className="text-xs text-gray-600 mt-0.5">
+                                {place.formatted_address}
+                              </p>
+                            </div>
+                            <span className="text-xs bg-primary-50 px-2 py-1 rounded-full text-primary-700 border border-primary-100">
+                              {place.rating ? `${place.rating} ★` : "No rating"}
                             </span>
                           </div>
                         ))}
