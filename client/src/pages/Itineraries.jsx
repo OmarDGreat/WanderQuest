@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { itineraryService } from "../services";
+import { weatherService } from "../services/weather.service";
 import { Button, Card } from "../components/common";
 import Layout from "../components/layout/Layout";
 import { Link } from "react-router-dom";
@@ -10,10 +11,47 @@ export default function Itineraries() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("startDate"); // startDate, title, budget
+  const [weatherData, setWeatherData] = useState({});
 
   useEffect(() => {
     loadItineraries();
   }, []);
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      for (const itinerary of itineraries) {
+        if (itinerary.location) {
+          try {
+            const data = await weatherService.getWeatherForLocation(
+              itinerary.location
+            );
+            const filteredData = {
+              ...data,
+              list: data.list
+                .filter((item) => {
+                  const date = new Date(item.dt * 1000);
+                  return date.getUTCHours() === 12;
+                })
+                .slice(0, 5),
+            };
+            setWeatherData((prev) => ({
+              ...prev,
+              [itinerary.id]: filteredData,
+            }));
+          } catch (err) {
+            console.error(
+              `Failed to load weather for ${itinerary.location}:`,
+              err
+            );
+          }
+        }
+      }
+    };
+
+    if (itineraries.length > 0) {
+      fetchWeatherData();
+    }
+  }, [itineraries]);
 
   const loadItineraries = async () => {
     try {
@@ -295,11 +333,54 @@ export default function Itineraries() {
                     </div>
                   </div>
 
-                  {/* Provide Weather based location *Up to 5 days* */}
-                  
-                  {/* <div>
-                  {itinerary.weatherData}
-                  </div> */}
+                  {weatherData[itinerary.id] && (
+                    <div className="mt-4 pt-4 border-t border-primary-100/60">
+                      <h4 className="text-sm font-medium text-gray-900 flex items-center">
+                        <svg
+                          className="mr-2 h-4 w-4 text-primary-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                          />
+                        </svg>
+                        Weather Forecast
+                      </h4>
+                      <div className="mt-3 flex gap-2 overflow-x-auto">
+                        {weatherData[itinerary.id].list.map((day, index) => (
+                          <div
+                            key={index}
+                            className="flex-shrink-0 flex flex-col items-center p-2 bg-blue-50 rounded-lg border border-primary-100"
+                          >
+                            <span className="text-xs text-gray-600">
+                              {index === 0
+                                ? "Today"
+                                : new Date(day.dt * 1000).toLocaleDateString(
+                                    "en-US",
+                                    { weekday: "short" }
+                                  )}
+                            </span>
+                            <img
+                              src={`http://openweathermap.org/img/w/${day.weather[0].icon}.png`}
+                              alt={day.weather[0].description}
+                              className="w-8 h-8"
+                            />
+                            <span className="text-sm font-medium">
+                              {Math.round(day.main.temp)}°C
+                            </span>
+                            <span className="text-xs text-gray-600">
+                              {day.weather[0].main}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="mt-6 pt-4 border-t border-primary-100/60 flex justify-end space-x-3">
                     <Button
                       variant="secondary"
