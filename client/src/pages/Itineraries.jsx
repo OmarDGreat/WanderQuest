@@ -452,16 +452,21 @@ export default function Itineraries() {
                                     alt={place.name}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
+                                      console.log(
+                                        `Using fallback image for ${place.name}`
+                                      );
                                       e.target.src =
                                         place.photos[0].fallback_url ||
-                                        "https://via.placeholder.com/100x100?text=No+Image";
-                                      e.target.onerror = null;
+                                        `https://via.placeholder.com/100x100?text=${encodeURIComponent(
+                                          place.name.substring(0, 10)
+                                        )}`;
+                                      e.target.onerror = null; // Prevent infinite error loop
                                     }}
                                   />
                                 ) : (
                                   <div className="w-full h-full bg-primary-100 flex items-center justify-center">
-                                    <span className="text-primary-700 text-xs">
-                                      {index + 1}
+                                    <span className="text-primary-700 text-xs font-medium">
+                                      {place.name.substring(0, 2).toUpperCase()}
                                     </span>
                                   </div>
                                 )}
