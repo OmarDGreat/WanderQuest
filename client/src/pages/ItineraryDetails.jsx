@@ -520,17 +520,44 @@ export default function ItineraryDetails() {
                                   alt={`${place.name} photo ${photoIndex + 1}`}
                                   className="h-48 w-auto object-cover flex-shrink-0"
                                   onError={(e) => {
-                                    e.target.src = photo.fallback_url;
-                                    e.target.onerror = null;
+                                    // Try the fallback URL first if available
+                                    if (
+                                      photo.fallback_url &&
+                                      e.target.src !== photo.fallback_url
+                                    ) {
+                                      e.target.src = photo.fallback_url;
+                                    }
+                                    // If that fails or doesn't exist, use a placeholder with the place name
+                                    else {
+                                      e.target.src = `https://via.placeholder.com/400x300?text=${encodeURIComponent(
+                                        place.name
+                                      )}`;
+                                      e.target.onerror = null; // Prevent infinite error loop
+                                    }
                                   }}
                                 />
                               ))}
                             </div>
                           ) : (
                             <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
-                              <p className="text-gray-500">
-                                No images available
-                              </p>
+                              <div className="text-center">
+                                <svg
+                                  className="mx-auto h-10 w-10 text-gray-400"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                  />
+                                </svg>
+                                <p className="mt-2 text-gray-500 text-sm">
+                                  No images available
+                                </p>
+                              </div>
                             </div>
                           )}
                         </div>

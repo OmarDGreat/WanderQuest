@@ -13,9 +13,25 @@ const placesController = {
           },
         }
       );
+      
+      // Process the response to add fallback URLs
+      if (response.data && response.data.results) {
+        response.data.results = response.data.results.map(place => {
+          if (place.photos && place.photos.length > 0) {
+            place.photos = place.photos.map(photo => {
+              return {
+                ...photo,
+                fallback_url: `https://via.placeholder.com/400x300?text=${encodeURIComponent(place.name || 'Place')}`
+              };
+            });
+          }
+          return place;
+        });
+      }
 
       res.json(response.data);
     } catch (error) {
+      console.error("Places API error:", error.message);
       next(error);
     }
   },
@@ -32,9 +48,20 @@ const placesController = {
           },
         }
       );
+      
+      // Add fallback URLs to photos
+      if (response.data && response.data.result && response.data.result.photos) {
+        response.data.result.photos = response.data.result.photos.map(photo => {
+          return {
+            ...photo,
+            fallback_url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(response.data.result.name || 'Place Detail')}`
+          };
+        });
+      }
 
       res.json(response.data);
     } catch (error) {
+      console.error("Place details API error:", error.message);
       next(error);
     }
   },
