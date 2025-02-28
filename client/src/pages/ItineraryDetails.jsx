@@ -495,33 +495,92 @@ export default function ItineraryDetails() {
             </div>
           )}
 
-          {/* Places Section */}
-          {placesData && (
-            <div className="p-6 border-t border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Popular Places Nearby
-              </h2>
-              <div className="grid gap-4">
-                {placesData.map((place, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-medium text-gray-900">
-                          {place.name}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          {place.formatted_address}
-                        </p>
-                      </div>
-                      <div className="text-sm bg-primary-50 px-3 py-1 rounded-full text-primary-700">
-                        {place.rating ? `${place.rating} ★` : "No rating"}
+          {/* Places Section with Photos */}
+          {itinerary.placesWithPhotos &&
+            itinerary.placesWithPhotos.length > 0 && (
+              <div className="p-6 border-t border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Popular Places Nearby
+                </h2>
+                <div className="grid gap-6">
+                  {itinerary.placesWithPhotos.map((place, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 rounded-lg overflow-hidden shadow-md"
+                    >
+                      <div className="flex flex-col md:flex-row">
+                        {/* Photos gallery */}
+                        <div className="md:w-1/3 flex overflow-x-auto">
+                          {place.photos && place.photos.length > 0 ? (
+                            <div className="flex">
+                              {place.photos.map((photo, photoIndex) => (
+                                <img
+                                  key={photoIndex}
+                                  src={photo.url}
+                                  alt={`${place.name} photo ${photoIndex + 1}`}
+                                  className="h-48 w-auto object-cover flex-shrink-0"
+                                  onError={(e) => {
+                                    e.target.src = photo.fallback_url;
+                                    e.target.onerror = null;
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
+                              <p className="text-gray-500">
+                                No images available
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Place details */}
+                        <div className="p-4 md:w-2/3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-medium text-lg text-gray-900">
+                                {place.name}
+                              </h3>
+                              <p className="text-sm text-gray-500 mt-1">
+                                {place.formatted_address}
+                              </p>
+                            </div>
+                            <div className="text-sm bg-primary-50 px-3 py-1 rounded-full text-primary-700">
+                              {place.rating ? `${place.rating} ★` : "No rating"}
+                            </div>
+                          </div>
+
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                              place.name
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4 inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
+                          >
+                            View on Google Maps
+                            <svg
+                              className="ml-1 h-4 w-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
     </Layout>

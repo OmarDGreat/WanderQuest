@@ -1,14 +1,82 @@
 const { Itinerary } = require("../models");
 const axios = require("axios");
 
+// Helper function to fetch place images for a location
+const fetchPlaceImagesForLocation = async (location) => {
+  if (!location) return [];
+
+  try {
+    // Search for tourist attractions in the location
+    const placesResponse = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/textsearch/json`,
+      {
+        params: {
+          query: `${location} tourist attractions`,
+          key: process.env.GOOGLE_PLACES_API_KEY,
+        },
+      }
+    );
+
+    if (
+      placesResponse.data.status !== "OK" ||
+      !placesResponse.data.results.length
+    ) {
+      console.log(`No places found for ${location}`);
+      return [];
+    }
+
+    // Get top 3 places with photos
+    const places = placesResponse.data.results.slice(0, 3).map((place) => ({
+      place_id: place.place_id,
+      name: place.name,
+      formatted_address: place.formatted_address,
+      rating: place.rating,
+      photos: place.photos
+        ? place.photos.slice(0, 1).map((photo) => ({
+            photo_reference: photo.photo_reference,
+            url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${process.env.GOOGLE_PLACES_API_KEY}`,
+            fallback_url: `https://via.placeholder.com/400x300?text=${encodeURIComponent(
+              place.name
+            )}`,
+          }))
+        : [],
+    }));
+
+    return places;
+  } catch (error) {
+    console.error(`Error fetching places for ${location}:`, error.message);
+    return [];
+  }
+};
+
 const itineraryController = {
   getAllItineraries: async (req, res) => {
     try {
       const itineraries = await Itinerary.findAll({
         where: { userId: req.user.id },
+        order: [["createdAt", "DESC"]],
       });
-      res.json(itineraries);
+
+      // Fetch place images for the 5 most recent itineraries
+      const itinerariesWithPlaces = await Promise.all(
+        itineraries.slice(0, 5).map(async (itinerary) => {
+          const places = await fetchPlaceImagesForLocation(itinerary.location);
+          return {
+            ...itinerary.toJSON(),
+            placesWithPhotos: places,
+          };
+        })
+      );
+
+      // Combine with remaining itineraries
+      const result = [
+        ...itinerariesWithPlaces,
+        ...itineraries.slice(5).map((itinerary) => itinerary.toJSON()),
+      ];
+
+      res.json(result);
     } catch (error) {
+      console.error("Error getting itineraries:", error);
       res.status(400).json({ error: error.message });
     }
   },
@@ -135,8 +203,17 @@ const itineraryController = {
         return res.status(404).json({ error: "Itinerary not found" });
       }
 
-      res.json(itinerary);
+      // Fetch place images
+      const places = await fetchPlaceImagesForLocation(itinerary.location);
+
+      const result = {
+        ...itinerary.toJSON(),
+        placesWithPhotos: places,
+      };
+
+      res.json(result);
     } catch (error) {
+      console.error("Error in getItineraryById:", error);
       res.status(400).json({ error: error.message });
     }
   },
