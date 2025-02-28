@@ -439,80 +439,51 @@ export default function Itineraries() {
                         Popular Places Nearby
                       </h4>
                       <div className="mt-3 space-y-2">
-                        {placesData[itinerary.id].map((place, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center text-sm bg-blue-50 rounded-lg p-2 border border-primary-100"
-                          >
-                            <span className="w-8 h-8 flex-shrink-0 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-medium">
-                              {index + 1}
-                            </span>
-                            <div className="ml-3 flex-1">
-                              <span className="font-medium text-gray-900">
-                                {place.name}
-                              </span>
-                              <p className="text-xs text-gray-600 mt-0.5">
-                                {place.formatted_address}
-                              </p>
-                            </div>
-                            <span className="text-xs bg-primary-50 px-2 py-1 rounded-full text-primary-700 border border-primary-100">
-                              {place.rating ? `${place.rating} ★` : "No rating"}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {itinerary.placesWithPhotos &&
-                    itinerary.placesWithPhotos.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-primary-100/60">
-                        <h4 className="text-sm font-medium text-gray-900 flex items-center">
-                          <svg
-                            className="mr-2 h-4 w-4 text-primary-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                          </svg>
-                          Popular Places
-                        </h4>
-                        <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-                          {itinerary.placesWithPhotos.map(
-                            (place, index) =>
-                              place.photos &&
-                              place.photos.length > 0 && (
-                                <div
-                                  key={index}
-                                  className="flex-shrink-0 w-24 h-24 relative rounded-lg overflow-hidden"
-                                >
+                        {itinerary.placesWithPhotos &&
+                          itinerary.placesWithPhotos.map((place, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center text-sm bg-blue-50 rounded-lg p-2 border border-primary-100"
+                            >
+                              <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden">
+                                {place.photos && place.photos.length > 0 ? (
                                   <img
                                     src={place.photos[0].url}
                                     alt={place.name}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
                                       e.target.src =
-                                        place.photos[0].fallback_url;
+                                        place.photos[0].fallback_url ||
+                                        "https://via.placeholder.com/100x100?text=No+Image";
                                       e.target.onerror = null;
                                     }}
                                   />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                                    <span className="text-white text-xs p-1 truncate w-full">
-                                      {place.name}
+                                ) : (
+                                  <div className="w-full h-full bg-primary-100 flex items-center justify-center">
+                                    <span className="text-primary-700 text-xs">
+                                      {index + 1}
                                     </span>
                                   </div>
-                                </div>
-                              )
-                          )}
-                        </div>
+                                )}
+                              </div>
+                              <div className="ml-3 flex-1">
+                                <span className="font-medium text-gray-900">
+                                  {place.name}
+                                </span>
+                                <p className="text-xs text-gray-600 mt-0.5">
+                                  {place.formatted_address}
+                                </p>
+                              </div>
+                              <span className="text-xs bg-primary-50 px-2 py-1 rounded-full text-primary-700 border border-primary-100">
+                                {place.rating
+                                  ? `${place.rating} ★`
+                                  : "No rating"}
+                              </span>
+                            </div>
+                          ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
                   <div className="mt-6 pt-4 border-t border-primary-100/60 flex justify-end space-x-3">
                     <Button
