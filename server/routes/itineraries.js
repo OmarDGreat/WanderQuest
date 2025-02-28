@@ -7,6 +7,9 @@ const { Itinerary } = require("../models");
 // Get all itineraries for a user
 router.get("/", auth, itineraryController.getAllItineraries);
 
+// Get single itinerary by ID
+router.get("/:id", auth, itineraryController.getItineraryById);
+
 // Create new itinerary
 router.post("/", auth, itineraryController.createItinerary);
 

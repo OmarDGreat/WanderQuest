@@ -121,6 +121,25 @@ const itineraryController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  getItineraryById: async (req, res) => {
+    try {
+      const itinerary = await Itinerary.findOne({
+        where: {
+          id: req.params.id,
+          userId: req.user.id,
+        },
+      });
+
+      if (!itinerary) {
+        return res.status(404).json({ error: "Itinerary not found" });
+      }
+
+      res.json(itinerary);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
 
 module.exports = itineraryController;

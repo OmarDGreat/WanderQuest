@@ -6,7 +6,7 @@ export const itineraryService = {
     return response.data;
   },
 
-  getItinerary: async (id) => {
+  getItineraryById: async (id) => {
     const response = await api.get(`/itineraries/${id}`);
     return response.data;
   },
