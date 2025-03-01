@@ -9,6 +9,9 @@
       "dest": "https://wanderquest-qosw.onrender.com/api/$1"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*\\.(js|css|ico|png|jpg|svg|json))",
       "dest": "/client/dist/$1"
     },
