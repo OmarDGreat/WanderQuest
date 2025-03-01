@@ -12,7 +12,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? [process.env.CLIENT_URL, "https://your-vercel-domain.vercel.app"]
+        ? [process.env.CLIENT_URL, "https://wanderquest-client.vercel.app"]
         : "http://localhost:5173",
     credentials: true,
   })
