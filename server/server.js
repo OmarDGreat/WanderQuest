@@ -20,6 +20,9 @@ app.use(
       // Allow any Vercel deployment
       if (origin.includes("vercel.app")) return callback(null, true);
 
+      // Allow your GoDaddy domain
+      if (origin.includes("omar-daghestani.com")) return callback(null, true);
+
       // Allow your specific client URL if set
       if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
         return callback(null, true);
@@ -28,7 +31,7 @@ app.use(
       // Otherwise, deny the request
       callback(new Error("Not allowed by CORS"));
     },
-    
+
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
