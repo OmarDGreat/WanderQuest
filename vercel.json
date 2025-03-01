@@ -3,21 +3,11 @@
   "buildCommand": "cd client && npm install && npm run build",
   "outputDirectory": "client/dist",
   "framework": "vite",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "https://wanderquest-qosw.onrender.com/api/$1"
+      "source": "/api/:path*",
+      "destination": "https://wanderquest-qosw.onrender.com/api/:path*"
     },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*\\.(js|css|ico|png|jpg|svg|json))",
-      "dest": "/client/dist/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/client/dist/index.html"
-    }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
