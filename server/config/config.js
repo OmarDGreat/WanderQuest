@@ -1,9 +1,10 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 const config = {
   development: {
     username: process.env.DB_USER || "postgres",
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PASSWORD || "",
     database: "wanderquest_db",
     host: process.env.DB_HOST || "localhost",
     dialect: "postgres",
