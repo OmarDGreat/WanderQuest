@@ -54,13 +54,13 @@ export default function Register() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-16">
-        <div className="bg-gradient-to-br from-white to-primary-50/30 border border-primary-100 shadow-lg rounded-xl">
+        <div className="bg-gradient-to-br from-white dark:from-gray-800 to-primary-50/30 dark:to-primary-900/30 border border-primary-100 dark:border-primary-800 shadow-lg rounded-xl">
           <div className="px-8 py-10 sm:p-12">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-extrabold text-gray-900">
+              <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">
                 Create Account
               </h2>
-              <p className="mt-3 text-base text-gray-600">
+              <p className="mt-3 text-base text-gray-600 dark:text-gray-300">
                 Join us to start planning your trips
               </p>
             </div>
@@ -74,14 +74,14 @@ export default function Register() {
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Email address
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
                     placeholder="you@example.com"
                   />
                   {errors.email && (
@@ -92,15 +92,14 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Password
                   </label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
-                    placeholder="••••••••"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
                   />
                   {errors.password && (
                     <p className="mt-2 text-sm text-error-600">
@@ -110,15 +109,14 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Confirm Password
                   </label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
-                    placeholder="••••••••"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
                   />
                   {errors.confirmPassword && (
                     <p className="mt-2 text-sm text-error-600">

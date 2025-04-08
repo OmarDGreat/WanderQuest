@@ -15,8 +15,10 @@ const Button = forwardRef(
     ref
   ) => {
     const variants = {
-      primary: "btn-primary",
-      secondary: "btn-secondary",
+      primary:
+        "bg-primary-600 hover:bg-primary-700 text-white dark:bg-primary-500 dark:hover:bg-primary-600",
+      secondary:
+        "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700",
       success: "btn-success",
       error: "btn-error",
       outline: "btn-outline",
