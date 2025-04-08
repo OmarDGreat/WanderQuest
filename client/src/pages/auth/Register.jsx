@@ -56,13 +56,13 @@ export default function Register() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto px-4 py-16">
-        <div className="bg-gradient-to-br from-white dark:from-gray-800 to-primary-50/30 dark:to-primary-900/30 border border-primary-100 dark:border-primary-800 shadow-lg rounded-xl">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-xl">
           <div className="px-8 py-10 sm:p-12">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">
                 Create Account
               </h2>
-              <p className="mt-3 text-base text-gray-600 dark:text-gray-300">
+              <p className="mt-3 text-base text-gray-700 dark:text-gray-300">
                 Join us to start planning your trips
               </p>
             </div>
@@ -76,15 +76,21 @@ export default function Register() {
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Email address
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                      bg-white dark:bg-gray-700 
+                      text-gray-900 dark:text-white
+                      shadow-sm focus:border-primary-500 focus:ring-primary-500 
+                      text-lg py-3"
                     placeholder="you@example.com"
+                    autoComplete="username email"
+                    required
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-error-600">
@@ -94,7 +100,7 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Password
                   </label>
                   <div className="relative">
@@ -102,7 +108,13 @@ export default function Register() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3 pr-10"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                        bg-white dark:bg-gray-700 
+                        text-gray-900 dark:text-white
+                        shadow-sm focus:border-primary-500 focus:ring-primary-500 
+                        text-lg py-3 pr-10"
+                      autoComplete="new-password"
+                      required
                     />
                     <button
                       type="button"
@@ -154,7 +166,7 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -162,7 +174,13 @@ export default function Register() {
                       type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-lg py-3 pr-10"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                        bg-white dark:bg-gray-700 
+                        text-gray-900 dark:text-white
+                        shadow-sm focus:border-primary-500 focus:ring-primary-500 
+                        text-lg py-3 pr-10"
+                      autoComplete="new-password"
+                      required
                     />
                     <button
                       type="button"
@@ -228,29 +246,29 @@ export default function Register() {
               </div>
             </form>
 
-            <div className="mt-8 space-y-4 text-center text-sm text-gray-600">
-              <p>
+            <div className="mt-8 text-center text-sm">
+              <p className="text-gray-700 dark:text-gray-300">
                 Already have an account?{" "}
                 <Link
                   to="/login"
-                  className="font-medium text-primary-600 hover:text-primary-500"
+                  className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
                 >
                   Sign in
                 </Link>
               </p>
 
-              <p className="text-xs">
+              <p className="mt-4 text-xs text-gray-600 dark:text-gray-400">
                 By registering, you agree to our{" "}
                 <Link
                   to="/terms"
-                  className="font-medium text-primary-600 hover:text-primary-500"
+                  className="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
                 >
                   Terms of Service
                 </Link>{" "}
                 and{" "}
                 <Link
                   to="/privacy"
-                  className="font-medium text-primary-600 hover:text-primary-500"
+                  className="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
                 >
                   Privacy Policy
                 </Link>
