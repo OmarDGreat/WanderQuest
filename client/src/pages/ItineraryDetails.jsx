@@ -171,7 +171,7 @@ export default function ItineraryDetails() {
             variant="secondary"
             as={Link}
             to="/itineraries"
-            className="group"
+            className="group flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           >
             <svg
               className="mr-2 h-5 w-5 transform transition-transform group-hover:-translate-x-1"
@@ -207,12 +207,12 @@ export default function ItineraryDetails() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="p-6 bg-gradient-to-r from-primary-100 to-primary-50">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div className="p-6 bg-gradient-to-r from-primary-100/50 dark:from-primary-900/20 to-primary-50/50 dark:to-primary-900/10">
             {isEditing ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Title
                   </label>
                   <input
@@ -220,12 +220,12 @@ export default function ItineraryDetails() {
                     name="title"
                     value={editedItinerary.title}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Start Date
                     </label>
                     <input
@@ -233,11 +233,11 @@ export default function ItineraryDetails() {
                       name="startDate"
                       value={editedItinerary.startDate.split("T")[0]}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       End Date
                     </label>
                     <input
@@ -245,13 +245,13 @@ export default function ItineraryDetails() {
                       name="endDate"
                       value={editedItinerary.endDate.split("T")[0]}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Location
                     </label>
                     <input
@@ -259,11 +259,11 @@ export default function ItineraryDetails() {
                       name="location"
                       value={editedItinerary.location}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Budget
                     </label>
                     <input
@@ -271,20 +271,20 @@ export default function ItineraryDetails() {
                       name="budget"
                       value={editedItinerary.budget}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                      className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                     />
                   </div>
                 </div>
               </div>
             ) : (
               <>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                   {itinerary.title}
                 </h1>
                 <div className="mt-4 flex flex-wrap gap-4">
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-gray-300">
                     <svg
-                      className="h-5 w-5 mr-2 text-primary-500"
+                      className="h-5 w-5 mr-2 text-primary-500 dark:text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -299,9 +299,9 @@ export default function ItineraryDetails() {
                     {formatDate(itinerary.startDate)} -{" "}
                     {formatDate(itinerary.endDate)}
                   </div>
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-gray-300">
                     <svg
-                      className="h-5 w-5 mr-2 text-primary-500"
+                      className="h-5 w-5 mr-2 text-primary-500 dark:text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -321,9 +321,9 @@ export default function ItineraryDetails() {
                     </svg>
                     {itinerary.location}
                   </div>
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-gray-300">
                     <svg
-                      className="h-5 w-5 mr-2 text-primary-500"
+                      className="h-5 w-5 mr-2 text-primary-500 dark:text-primary-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -343,9 +343,9 @@ export default function ItineraryDetails() {
           </div>
 
           {/* Activities Section */}
-          <div className="p-6 border-t border-gray-200">
+          <div className="p-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Activities
               </h2>
               {isEditing && (
@@ -357,11 +357,14 @@ export default function ItineraryDetails() {
             <div className="space-y-4">
               {(isEditing ? editedItinerary : itinerary).activities.map(
                 (activity, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                  <div
+                    key={index}
+                    className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg"
+                  >
                     {isEditing ? (
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Day
                           </label>
                           <input
@@ -370,11 +373,11 @@ export default function ItineraryDetails() {
                             onChange={(e) =>
                               handleActivityChange(index, "day", e.target.value)
                             }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                           />
                         </div>
                         <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Activity
                           </label>
                           <input
@@ -387,11 +390,11 @@ export default function ItineraryDetails() {
                                 e.target.value
                               )
                             }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Time
                           </label>
                           <input
@@ -404,11 +407,11 @@ export default function ItineraryDetails() {
                                 e.target.value
                               )
                             }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                           />
                         </div>
                         <div className="md:col-span-3">
-                          <label className="block text-sm font-medium text-gray-700">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Description
                           </label>
                           <input
@@ -421,7 +424,7 @@ export default function ItineraryDetails() {
                                 e.target.value
                               )
                             }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-primary-500 dark:focus:border-primary-400 focus:ring-primary-500 dark:focus:ring-primary-400"
                           />
                         </div>
                         <div className="flex items-end">
@@ -436,19 +439,19 @@ export default function ItineraryDetails() {
                     ) : (
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <span className="w-8 h-8 flex-shrink-0 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-medium">
+                          <span className="w-8 h-8 flex-shrink-0 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 flex items-center justify-center font-medium">
                             {activity.day}
                           </span>
                           <div className="ml-4">
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
                               {activity.name}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
                               {activity.description}
                             </p>
                           </div>
                         </div>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           {activity.time}
                         </span>
                       </div>
@@ -461,17 +464,17 @@ export default function ItineraryDetails() {
 
           {/* Weather Section */}
           {weatherData && (
-            <div className="p-6 border-t border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Weather Forecast
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {weatherData.list.map((day, index) => (
                   <div
                     key={index}
-                    className="bg-gray-50 p-4 rounded-lg text-center"
+                    className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg text-center"
                   >
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {index === 0
                         ? "Today"
                         : new Date(day.dt * 1000).toLocaleDateString("en-US", {
@@ -483,10 +486,10 @@ export default function ItineraryDetails() {
                       alt={day.weather[0].description}
                       className="mx-auto"
                     />
-                    <p className="text-lg font-medium">
+                    <p className="text-lg font-medium text-gray-900 dark:text-white">
                       {Math.round(day.main.temp)}°C
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {day.weather[0].main}
                     </p>
                   </div>
@@ -495,21 +498,20 @@ export default function ItineraryDetails() {
             </div>
           )}
 
-          {/* Places Section with Photos */}
+          {/* Places Section */}
           {itinerary.placesWithPhotos &&
             itinerary.placesWithPhotos.length > 0 && (
-              <div className="p-6 border-t border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                   Popular Places Nearby
                 </h2>
                 <div className="grid gap-6">
                   {itinerary.placesWithPhotos.map((place, index) => (
                     <div
                       key={index}
-                      className="bg-gray-50 rounded-lg overflow-hidden shadow-md"
+                      className="bg-gray-50 dark:bg-gray-700/50 rounded-lg overflow-hidden shadow-md"
                     >
                       <div className="flex flex-col md:flex-row">
-                        {/* Photos gallery */}
                         <div className="md:w-1/3 flex overflow-x-auto">
                           {place.photos && place.photos.length > 0 ? (
                             <div className="flex">
@@ -520,29 +522,25 @@ export default function ItineraryDetails() {
                                   alt={`${place.name} photo ${photoIndex + 1}`}
                                   className="h-48 w-auto object-cover flex-shrink-0"
                                   onError={(e) => {
-                                    // Try the fallback URL first if available
                                     if (
                                       photo.fallback_url &&
                                       e.target.src !== photo.fallback_url
                                     ) {
                                       e.target.src = photo.fallback_url;
-                                    }
-                                    // If that fails or doesn't exist, use a placeholder with the place name
-                                    else {
+                                    } else {
                                       e.target.src = `https://via.placeholder.com/400x300?text=${encodeURIComponent(
                                         place.name
                                       )}`;
-                                      e.target.onerror = null; // Prevent infinite error loop
                                     }
                                   }}
                                 />
                               ))}
                             </div>
                           ) : (
-                            <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
+                            <div className="h-48 w-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
                               <div className="text-center">
                                 <svg
-                                  className="mx-auto h-10 w-10 text-gray-400"
+                                  className="mx-auto h-10 w-10 text-gray-400 dark:text-gray-500"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -554,7 +552,7 @@ export default function ItineraryDetails() {
                                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                   />
                                 </svg>
-                                <p className="mt-2 text-gray-500 text-sm">
+                                <p className="mt-2 text-gray-500 dark:text-gray-400 text-sm">
                                   No images available
                                 </p>
                               </div>
@@ -562,18 +560,17 @@ export default function ItineraryDetails() {
                           )}
                         </div>
 
-                        {/* Place details */}
                         <div className="p-4 md:w-2/3">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="font-medium text-lg text-gray-900">
+                              <h3 className="font-medium text-lg text-gray-900 dark:text-white">
                                 {place.name}
                               </h3>
-                              <p className="text-sm text-gray-500 mt-1">
+                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 {place.formatted_address}
                               </p>
                             </div>
-                            <div className="text-sm bg-primary-50 px-3 py-1 rounded-full text-primary-700">
+                            <div className="text-sm bg-primary-50 dark:bg-primary-900/30 px-3 py-1 rounded-full text-primary-700 dark:text-primary-300">
                               {place.rating ? `${place.rating} ★` : "No rating"}
                             </div>
                           </div>
@@ -584,7 +581,7 @@ export default function ItineraryDetails() {
                             )}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-4 inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
+                            className="mt-4 inline-flex items-center text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
                           >
                             View on Google Maps
                             <svg
