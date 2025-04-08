@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { validateEmail } from "../../utils/validation.utils";
+import { parseApiError, ErrorTypes, ErrorMessages } from "../../utils/error.utils";
 import { Button } from "../../components/common";
 import Layout from "../../components/layout/Layout";
 
@@ -10,21 +11,36 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  // Create a click handler instead of form submit
-  const handleLoginClick = async () => {
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/itineraries");
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError("");
     setIsLoading(true);
 
+    // Validate email
+    if (!validateEmail(email)) {
+      setError(ErrorMessages[ErrorTypes.VALIDATION].INVALID_EMAIL);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       await login(email, password);
-      navigate("/itineraries");
+      // Navigation will be handled by the useEffect above
     } catch (err) {
       console.error("Login error:", err);
-      setError("Invalid email or password. Please try again.");
+      const parsedError = parseApiError(err);
+      setError(parsedError.message);
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +72,7 @@ export default function Login() {
               </div>
             )}
 
-            <div className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Email address
@@ -69,6 +85,7 @@ export default function Login() {
                     bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 
                     focus:ring-primary-500 text-lg py-3"
                   autoComplete="email"
+                  required
                 />
               </div>
 
@@ -85,22 +102,28 @@ export default function Login() {
                       bg-white dark:bg-gray-800 shadow-sm focus:border-primary-500 
                       focus:ring-primary-500 text-lg py-3 pr-10"
                     autoComplete="current-password"
+                    required
                   />
-                  {/* Password toggle button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
                 </div>
               </div>
 
               <Button
-                type="button"
+                type="submit"
                 variant="primary"
                 className="w-full"
                 isLoading={isLoading}
-                onClick={handleLoginClick}
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>
-            </div>
+            </form>
 
             {/* Add this section after the form */}
             <div className="mt-8 text-center text-sm">

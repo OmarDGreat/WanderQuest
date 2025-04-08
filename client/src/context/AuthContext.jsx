@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../lib/api";
+import { authService } from "../services";
+import { storage } from "../utils/storage.utils";
 
 export const AuthContext = createContext();
 
@@ -14,17 +16,18 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = storage.get("token");
       if (!token) {
         setLoading(false);
         return;
       }
 
-      const response = await api.get("/auth/profile");
-      setUser(response.data);
+      const userData = await authService.getProfile();
+      setUser(userData);
     } catch (err) {
-      setError(err.message);
-      localStorage.removeItem("token");
+      console.error("Auth check error:", err);
+      setError(err.message || "Authentication failed");
+      storage.remove("token");
     } finally {
       setLoading(false);
     }
@@ -32,31 +35,36 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await api.post("/auth/login", { email, password });
-      const { token } = response.data;
-      localStorage.setItem("token", token);
+      setLoading(true);
+      const response = await authService.login(email, password);
       await checkAuth();
-      return true;
+      return response;
     } catch (err) {
-      throw err.response?.data?.error || "Login failed";
+      console.error("Login error:", err);
+      throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
   const register = async (email, password) => {
     try {
-      const response = await api.post("/auth/register", { email, password });
-      const { token } = response.data;
-      localStorage.setItem("token", token);
+      setLoading(true);
+      const response = await authService.register(email, password);
       await checkAuth();
-      return true;
+      return response;
     } catch (err) {
-      throw err.response?.data?.error || "Registration failed";
+      console.error("Registration error:", err);
+      throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    storage.remove("token");
     setUser(null);
+    setError(null);
   };
 
   return (

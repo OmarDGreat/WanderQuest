@@ -1,37 +1,58 @@
 import api from "../lib/api";
 import { storage } from "../utils/storage.utils";
+import { parseApiError } from "../utils/error.utils";
 
 export const authService = {
   login: async (email, password) => {
-    const response = await api.post("/auth/login", { email, password });
-    const { token } = response.data;
-    storage.set("token", token);
-    return response.data;
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      const { token } = response.data;
+      storage.set("token", token);
+      return response.data;
+    } catch (error) {
+      throw parseApiError(error);
+    }
   },
 
   register: async (email, password) => {
-    const response = await api.post("/auth/register", { email, password });
-    const { token } = response.data;
-    storage.set("token", token);
-    return response.data;
+    try {
+      const response = await api.post("/auth/register", { email, password });
+      const { token } = response.data;
+      storage.set("token", token);
+      return response.data;
+    } catch (error) {
+      throw parseApiError(error);
+    }
   },
 
   getProfile: async () => {
-    const response = await api.get("/auth/profile");
-    return response.data;
+    try {
+      const response = await api.get("/auth/profile");
+      return response.data;
+    } catch (error) {
+      throw parseApiError(error);
+    }
   },
 
   updateProfile: async (userData) => {
-    const response = await api.put("/auth/profile", userData);
-    return response.data;
+    try {
+      const response = await api.put("/auth/profile", userData);
+      return response.data;
+    } catch (error) {
+      throw parseApiError(error);
+    }
   },
 
   changePassword: async (currentPassword, newPassword) => {
-    const response = await api.put("/auth/change-password", {
-      currentPassword,
-      newPassword,
-    });
-    return response.data;
+    try {
+      const response = await api.put("/auth/change-password", {
+        currentPassword,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw parseApiError(error);
+    }
   },
 
   logout: () => {
@@ -39,15 +60,23 @@ export const authService = {
   },
 
   forgotPassword: async (email) => {
-    const response = await api.post("/auth/forgot-password", { email });
-    return response.data;
+    try {
+      const response = await api.post("/auth/forgot-password", { email });
+      return response.data;
+    } catch (error) {
+      throw parseApiError(error);
+    }
   },
 
   resetPassword: async (token, newPassword) => {
-    const response = await api.post("/auth/reset-password", {
-      token,
-      newPassword,
-    });
-    return response.data;
+    try {
+      const response = await api.post("/auth/reset-password", {
+        token,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw parseApiError(error);
+    }
   },
 };

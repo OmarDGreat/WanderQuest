@@ -7,25 +7,24 @@ import Layout from "../components/layout/Layout";
 import { Link } from "react-router-dom";
 
 export default function Itineraries() {
-  const [itineraries, setItineraries] = useState([]);
+  const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("startDate"); // startDate, title, budget
+  const [sortBy, setSortBy] = useState("date"); // 'date' or 'title'
   const [weatherData, setWeatherData] = useState({});
-  const [placesData, setPlacesData] = useState({});
 
   useEffect(() => {
-    loadItineraries();
+    fetchTrips();
   }, []);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
-      for (const itinerary of itineraries) {
-        if (itinerary.location) {
+      for (const trip of trips) {
+        if (trip.location) {
           try {
             const data = await weatherService.getWeatherForLocation(
-              itinerary.location
+              trip.location
             );
             const filteredData = {
               ...data,
@@ -38,60 +37,27 @@ export default function Itineraries() {
             };
             setWeatherData((prev) => ({
               ...prev,
-              [itinerary.id]: filteredData,
+              [trip.id]: filteredData,
             }));
           } catch (err) {
-            console.error(
-              `Failed to load weather for ${itinerary.location}:`,
-              err
-            );
+            console.error(`Failed to load weather for ${trip.location}:`, err);
           }
         }
       }
     };
 
-    if (itineraries.length > 0) {
+    if (trips.length > 0) {
       fetchWeatherData();
     }
-  }, [itineraries]);
+  }, [trips]);
 
-  useEffect(() => {
-    const fetchPlacesData = async () => {
-      for (const itinerary of itineraries) {
-        if (itinerary.location) {
-          try {
-            const data = await placesService.searchPlaces(
-              itinerary.location,
-              "tourist attractions"
-            );
-            if (data && data.results) {
-              setPlacesData((prev) => ({
-                ...prev,
-                [itinerary.id]: data.results.slice(0, 3),
-              }));
-            }
-          } catch (err) {
-            console.error(
-              `Failed to load places for ${itinerary.location}:`,
-              err
-            );
-          }
-        }
-      }
-    };
-
-    if (itineraries.length > 0) {
-      fetchPlacesData();
-    }
-  }, [itineraries]);
-
-  const loadItineraries = async () => {
+  const fetchTrips = async () => {
     try {
-      const data = await itineraryService.getAllItineraries();
-      setItineraries(data);
+      const response = await itineraryService.getAllItineraries();
+      setTrips(response);
+      setLoading(false);
     } catch (err) {
-      setError("Failed to load itineraries");
-    } finally {
+      setError("Failed to fetch trips");
       setLoading(false);
     }
   };
@@ -99,27 +65,23 @@ export default function Itineraries() {
   const handleDelete = async (id) => {
     try {
       await itineraryService.deleteItinerary(id);
-      setItineraries(itineraries.filter((item) => item.id !== id));
+      setTrips(trips.filter((item) => item.id !== id));
     } catch (err) {
       setError("Failed to delete itinerary");
     }
   };
 
-  const filteredItineraries = itineraries
-    .filter((itinerary) =>
-      itinerary.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTrips = trips
+    .filter(
+      (trip) =>
+        trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        trip.location.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => {
-      switch (sortBy) {
-        case "startDate":
-          return new Date(a.startDate) - new Date(b.startDate);
-        case "title":
-          return a.title.localeCompare(b.title);
-        case "budget":
-          return parseFloat(a.budget) - parseFloat(b.budget);
-        default:
-          return 0;
+      if (sortBy === "date") {
+        return new Date(b.startDate) - new Date(a.startDate);
       }
+      return a.title.localeCompare(b.title);
     });
 
   const formatDate = (dateString) => {
@@ -157,174 +119,110 @@ export default function Itineraries() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-10">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                My Itineraries
-              </h1>
-              <p className="mt-2 text-sm text-gray-600">
-                Manage and view all your planned trips
-              </p>
-            </div>
-            <div className="mt-4 sm:mt-0">
-              <Button
-                variant="primary"
-                as={Link}
-                to="/create-trip"
-                className="w-full sm:w-auto"
-              >
-                <svg
-                  className="-ml-1 mr-2 h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                Create New Trip
-              </Button>
-            </div>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              My Itineraries
+            </h1>
+            <p className="mt-2 text-base text-gray-600 dark:text-gray-300">
+              Manage and view all your planned trips
+            </p>
           </div>
-
-          <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search itineraries..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 pl-10 focus:border-primary-500 focus:ring-primary-500"
-                />
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <div className="sm:w-48">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-primary-500 focus:ring-primary-500"
-              >
-                <option value="startDate">Sort by Date</option>
-                <option value="title">Sort by Title</option>
-                <option value="budget">Sort by Budget</option>
-              </select>
-            </div>
-          </div>
+          <Link to="/create-trip" className="btn-primary">
+            Create New Trip
+          </Link>
         </div>
 
-        {filteredItineraries.length === 0 ? (
-          <Card className="text-center py-12 bg-gray-200">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
-              />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
+        <div className="flex gap-4 mb-6">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search itineraries..."
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600"
+            />
+          </div>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600"
+          >
+            <option value="date">Sort by Date</option>
+            <option value="title">Sort by Title</option>
+          </select>
+        </div>
+
+        {filteredTrips.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 dark:text-gray-500 mb-4">
+              <svg className="mx-auto h-12 w-12" /* ... */ />
+            </div>
+            <h3 className="mt-2 text-sm font-semibold text-gray-900 dark:text-white">
               No itineraries found
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
-              Get started by creating a new trip
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Get started by creating a new trip.
             </p>
             <div className="mt-6">
-              <Button variant="primary" as={Link} to="/create-trip">
+              <Link to="/create-trip" className="btn-primary">
                 Create New Trip
-              </Button>
+              </Link>
             </div>
-          </Card>
+          </div>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredItineraries.map((itinerary) => (
-              <Card
-                key={itinerary.id}
-                className="flex flex-col h-full transform transition-all duration-200 hover:shadow-xl hover:-translate-y-1 bg-gradient-to-br from-white to-primary-200/30 border border-primary-100"
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredTrips.map((trip) => (
+              <Link
+                key={trip.id}
+                to={`/itineraries/${trip.id}`}
+                className="block bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden group"
               >
-                <div className="p-6">
-                  <div className="flex items-start justify-between border-b border-primary-100/60 pb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors">
-                        {itinerary.title}
+                {trip.placesWithPhotos && trip.placesWithPhotos.length > 0 && (
+                  <div className="h-40 w-full overflow-hidden relative">
+                    <img
+                      src={
+                        trip.placesWithPhotos[0]?.photos?.[0]?.url ||
+                        `https://via.placeholder.com/400x200?text=${encodeURIComponent(
+                          trip.location
+                        )}`
+                      }
+                      alt={`${trip.location} preview`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        if (
+                          trip.placesWithPhotos[0]?.photos?.[0]?.fallback_url
+                        ) {
+                          e.target.src =
+                            trip.placesWithPhotos[0].photos[0].fallback_url;
+                        } else {
+                          e.target.src = `https://via.placeholder.com/400x200?text=${encodeURIComponent(
+                            trip.location
+                          )}`;
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <h3 className="text-lg font-semibold text-white truncate">
+                        {trip.title}
                       </h3>
-                      <div className="mt-2 flex items-center text-sm text-gray-600">
-                        <svg
-                          className="mr-1.5 h-4 w-4 text-primary-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        <span>
-                          {formatDate(itinerary.startDate)} -{" "}
-                          {formatDate(itinerary.endDate)}
-                        </span>
-                      </div>
-                      <div className="mt-2 flex items-center text-sm text-gray-600">
-                        <svg
-                          className="mr-1.5 h-4 w-4 text-primary-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                        <span>{itinerary.location}</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700 ring-1 ring-inset ring-primary-600/20 shadow-sm">
-                        ${parseFloat(itinerary.budget).toLocaleString()}
-                      </span>
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <h4 className="text-sm font-medium text-gray-900 flex items-center">
+                )}
+
+                <div className="p-4">
+                  {!trip.placesWithPhotos ||
+                  trip.placesWithPhotos.length === 0 ? (
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                      {trip.title}
+                    </h3>
+                  ) : null}
+
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                       <svg
-                        className="mr-2 h-4 w-4 text-primary-500"
+                        className="h-4 w-4 text-gray-400"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -333,92 +231,54 @@ export default function Itineraries() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
                         />
                       </svg>
-                      Activities
-                    </h4>
-                    <div className="mt-3 space-y-3">
-                      {itinerary.activities
-                        .slice(0, 3)
-                        .map((activity, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center text-sm bg-blue-100/80 rounded-lg p-2 hover:bg-white transition-colors border border-primary-100/40 shadow-sm"
-                          >
-                            <span className="w-8 h-8 flex-shrink-0 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-medium shadow-sm">
-                              {activity.day}
-                            </span>
-                            <span className="flex-1 ml-3 text-gray-900 font-medium">
-                              {activity.name}
-                            </span>
-                            <span className="text-primary-600 bg-primary-50 px-2 py-1 rounded-md text-xs border border-primary-100">
-                              {activity.time}
-                            </span>
-                          </div>
-                        ))}
-                      {itinerary.activities.length > 3 && (
-                        <p className="text-sm text-primary-600 font-medium mt-2 hover:text-primary-700 cursor-pointer transition-colors">
-                          +{itinerary.activities.length - 3} more activities
-                        </p>
-                      )}
+                      {trip.location}
                     </div>
+                    {trip.budget && (
+                      <div className="text-sm font-medium text-primary-600 dark:text-primary-400">
+                        ${parseFloat(trip.budget).toLocaleString()}
+                      </div>
+                    )}
                   </div>
 
-                  {weatherData[itinerary.id] && (
-                    <div className="mt-4 pt-4 border-t border-primary-100/60">
-                      <h4 className="text-sm font-medium text-gray-900 flex items-center">
-                        <svg
-                          className="mr-2 h-4 w-4 text-primary-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                          />
-                        </svg>
-                        Weather Forecast
-                      </h4>
-                      <div className="mt-3 flex gap-2 overflow-x-auto">
-                        {weatherData[itinerary.id].list.map((day, index) => (
-                          <div
-                            key={index}
-                            className="flex-shrink-0 flex flex-col items-center p-2 bg-blue-50 rounded-lg border border-primary-100"
-                          >
-                            <span className="text-xs text-gray-600">
-                              {index === 0
-                                ? "Today"
-                                : new Date(day.dt * 1000).toLocaleDateString(
-                                    "en-US",
-                                    { weekday: "short" }
-                                  )}
-                            </span>
-                            <img
-                              src={`http://openweathermap.org/img/w/${day.weather[0].icon}.png`}
-                              alt={day.weather[0].description}
-                              className="w-8 h-8"
-                            />
-                            <span className="text-sm font-medium">
-                              {Math.round(day.main.temp)}°C
-                            </span>
-                            <span className="text-xs text-gray-600">
-                              {day.weather[0].main}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    <svg
+                      className="h-4 w-4 text-gray-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    {formatDate(trip.startDate)} - {formatDate(trip.endDate)}
+                  </div>
 
-                  {placesData[itinerary.id] && (
-                    <div className="mt-4 pt-4 border-t border-primary-100/60">
-                      <h4 className="text-sm font-medium text-gray-900 flex items-center">
+                  <div className="flex items-center gap-4 mb-4">
+                    {weatherData[trip.id] && (
+                      <div className="flex items-center gap-1">
                         <svg
-                          className="mr-2 h-4 w-4 text-primary-500"
+                          className="h-5 w-5 text-orange-400"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                        </svg>
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {Math.round(weatherData[trip.id].list[0].main.temp)}°C
+                        </span>
+                      </div>
+                    )}
+                    {trip.activities && (
+                      <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                        <svg
+                          className="h-5 w-5 text-gray-400"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -427,118 +287,90 @@ export default function Itineraries() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                           />
                         </svg>
-                        Popular Places Nearby
-                      </h4>
-                      <div className="mt-3 space-y-2">
-                        {itinerary.placesWithPhotos &&
-                          itinerary.placesWithPhotos.map((place, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center text-sm bg-blue-50 rounded-lg p-2 border border-primary-100"
-                            >
-                              <div className="w-12 h-12 flex-shrink-0 rounded-md overflow-hidden">
+                        {trip.activities.length}{" "}
+                        {trip.activities.length === 1
+                          ? "activity"
+                          : "activities"}
+                      </div>
+                    )}
+                  </div>
+
+                  {trip.placesWithPhotos &&
+                    trip.placesWithPhotos.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+                          <svg
+                            className="h-5 w-5 text-primary-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                            />
+                          </svg>
+                          Nearby Places
+                        </div>
+                        <div className="flex gap-2 overflow-x-auto pb-1">
+                          {trip.placesWithPhotos.map((place, index) => (
+                            <div key={index} className="flex-shrink-0 w-24">
+                              <div className="h-16 w-24 rounded-md overflow-hidden">
                                 {place.photos && place.photos.length > 0 ? (
                                   <img
                                     src={place.photos[0].url}
                                     alt={place.name}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
-                                      console.log(
-                                        `Using fallback image for ${place.name}`
-                                      );
-                                      e.target.src =
-                                        place.photos[0].fallback_url ||
-                                        `https://via.placeholder.com/100x100?text=${encodeURIComponent(
+                                      if (place.photos[0].fallback_url) {
+                                        e.target.src =
+                                          place.photos[0].fallback_url;
+                                      } else {
+                                        e.target.src = `https://via.placeholder.com/100x100?text=${encodeURIComponent(
                                           place.name.substring(0, 10)
                                         )}`;
-                                      e.target.onerror = null; // Prevent infinite error loop
+                                      }
                                     }}
                                   />
                                 ) : (
-                                  <div className="w-full h-full bg-primary-100 flex items-center justify-center">
-                                    <span className="text-primary-700 text-xs font-medium">
-                                      {place.name.substring(0, 2).toUpperCase()}
-                                    </span>
+                                  <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                    <svg
+                                      className="h-6 w-6 text-gray-400"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                      />
+                                    </svg>
                                   </div>
                                 )}
                               </div>
-                              <div className="ml-3 flex-1">
-                                <span className="font-medium text-gray-900">
-                                  {place.name}
-                                </span>
-                                <p className="text-xs text-gray-600 mt-0.5">
-                                  {place.formatted_address}
-                                </p>
-                              </div>
-                              <span className="text-xs bg-primary-50 px-2 py-1 rounded-full text-primary-700 border border-primary-100">
-                                {place.rating
-                                  ? `${place.rating} ★`
-                                  : "No rating"}
-                              </span>
+                              <p className="text-xs text-gray-600 dark:text-gray-300 truncate mt-1">
+                                {place.name}
+                              </p>
                             </div>
                           ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  <div className="mt-6 pt-4 border-t border-primary-100/60 flex justify-end space-x-3">
-                    <Button
-                      variant="secondary"
-                      as={Link}
-                      to={`/itineraries/${itinerary.id}`}
-                      className="text-sm group hover:bg-primary-50"
-                    >
-                      <span className="flex items-center">
-                        View Details
-                        <svg
-                          className="ml-2 h-4 w-4 transform transition-transform group-hover:translate-x-1 text-primary-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </span>
-                    </Button>
-                    <Button
-                      variant="error"
-                      onClick={() => handleDelete(itinerary.id)}
-                      className="text-sm group"
-                    >
-                      <span className="flex items-center">
-                        <svg
-                          className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                        Delete
-                      </span>
-                    </Button>
+                  <div className="mt-4 flex justify-end">
+                    <span className="text-sm text-primary-600 dark:text-primary-400 font-medium group-hover:underline">
+                      View details
+                    </span>
                   </div>
                 </div>
-              </Card>
+              </Link>
             ))}
           </div>
         )}

@@ -1,12 +1,17 @@
-const { body, param, query } = require("express-validator");
-const { validationResult } = require("express-validator");
+const { body, query, param, validationResult } = require("express-validator");
 
-// Middleware to check for validation errors
+// Custom validation function for password
+const validatePassword = (value) => {
+  // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  return passwordRegex.test(value);
+};
+
+// Validation middleware
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log("Validation errors:", errors.array());
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ error: errors.array()[0].msg });
   }
   next();
 };
@@ -20,8 +25,10 @@ const validators = {
         .normalizeEmail()
         .withMessage("Must be a valid email address"),
       body("password")
-        .isLength({ min: 6 })
-        .withMessage("Password must be at least 6 characters long"),
+        .custom(validatePassword)
+        .withMessage(
+          "Password must be at least 8 characters with 1 uppercase, 1 lowercase, and 1 number"
+        ),
       validate,
     ],
     login: [
