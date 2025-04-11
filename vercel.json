@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://wanderquest-qosw.onrender.com/api/:path*"
+      "destination": "https://api.omar-daghestani.com/api/:path*"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
